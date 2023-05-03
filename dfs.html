@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Untitled</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+<pre><code>
+
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'D':['Y','F'],
+    'C':['X','G'],
+    'Y':['G'],
+    'F': ['G','H'],
+    'X':['Z','M'],
+    'Z':['N'],
+    'M':['G','O'],
+    'E': [],
+   
+}
+# Define the DFS function
+def dfs(graph, start, end, visited=None, path=None):
+    if visited is None:
+        visited = set()
+    if path is None:
+        path = []
+    visited.add(start)
+    path = path + [start]
+    if start == end:
+        return path
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            newpath = dfs(graph, neighbor, end, visited, path)
+            if newpath:
+                return newpath
+print(dfs(graph, 'A', 'G'))

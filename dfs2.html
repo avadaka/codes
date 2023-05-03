@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Untitled</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+<pre><code>
+
+class TreeNode:
+    def __init__(self, val=None, children=None):
+        self.val = val
+        self.children = children if children is not None else []
+
+def dfs_optimal_path(root, source, target, path, optimal_path):
+    if not root:
+        return
+    path.append(root.val)
+    print(path)
+    if root.val == target:
+        optimal_path.clear()
+        optimal_path.extend(path)
+        path_cost = len(optimal_path) - 1
+        print("Optimal path from", source, "to", target, ":", optimal_path, "\nOptimal Path Cost:", path_cost)
+        exit()
+    # Recursively search each child of the node
+    for child in root.children:
+        if child.val not in path:
+            dfs_optimal_path(child, source, target, path, optimal_path)
+    path.pop()
+
+root = TreeNode(1, [                #node 1 has childrens 2, 3, 4
+        TreeNode(2, [               #node 2 has childrens 5, 6
+            TreeNode(5, [           #node 4 has childrens 7, 8
+                TreeNode(9),        #node 5 has childrens 9, 10
+                TreeNode(10),       #node 7 has childrens 11, 12
+            ]),
+            TreeNode(6),
+        ]),
+        TreeNode(3),
+        TreeNode(4, [
+            TreeNode(7, [
+                TreeNode(11),
+                TreeNode(12),
+            ]),
+            TreeNode(8),
+        ]),
+    ])
+
+source = 1
+target = 11
+path = []
+optimal_path = []
+path_cost = 0
+
+dfs_optimal_path(root, source, target, path, optimal_path)
+print("No path from", source, "to", target, "found in the tree")
+</pre>
+</code>
+</body>
+</html>

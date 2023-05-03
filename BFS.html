@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Untitled</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+<pre><code>
+
+class Graph:
+    def __init__(self):
+        self.graph = {}
+    def add_edge(self, u, v):
+        if u not in self.graph:
+            self.graph[u] = []
+        self.graph[u].append(v)
+    def bfs(self, start, goal):
+        visited = set()
+        queue = [(start, 0)]
+        while queue:
+            current_node, level = queue.pop(0)
+            print(f"({current_node}, {level}), ", end= " ")
+            if current_node == goal:
+                print(f"\nGoal node {goal} found at level {level}")
+            return True
+            if current_node not in visited:
+                visited.add(current_node)
+                for neighbour in self.graph.get(current_node, []):
+                    if neighbour not in visited:
+                        queue.append((neighbour, level + 1))
+        print(f"\n Goal node {goal} not found in the graph")
+        return False
+
+g = Graph()
+n = int(input("Enter the number of edges: "))
+print("take input for edges in this way -----> 1 2 ")
+for i in range(n):
+    u, v = map(int,input("Enter edge (u v): ").split())
+g.add_edge(u, v)
+start = int(input("Enter the starting vertex: "))
+goal = int(input("Enter the goal vertex: "))
+print("BFS Traversal: ", end=" ")
+g.bfs(start, goal)
+
+</pre></code>
+</body>
+</html>

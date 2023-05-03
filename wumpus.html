@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Untitled</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+<pre><code>
+
+:- dynamic([
+       world_size/1,
+       position/2,
+       wumpus/1,
+       noPit/1,
+       noWumpus/1,
+       maybeVisitLater/2,
+       goldPath/1
+]).
+
+start:-
+
+    retractall(wumpus(_)),
+    retractall(noPit(_)),
+    retractall(noWumpus(_)),
+    retractall(maybeVisitLater(_,_)),
+    retractall(goldPath(_)),
+
+    init_board,
+    init_agent,
+    init_wumpus,
+    start_searching([1, 1], []),
+
+    maybeVisitLater(PausedCell, LeadingPath),
+    retract(maybeVisitLater(PausedCell, _)),
+    start_searching(PausedCell, LeadingPath).
+
+init_board:-
+    retractall(world_size(_)),
+    assert(world_size([5, 5])),
+    retractall(position(_, _)),
+    assert(position(gold, [3, 3])),
+
+    assert(position(pit, [3, 1])),
+    assert(position(pit, [5, 1])),
+    assert(position(pit, [3, 3])),
+    assert(position(pit, [4, 4])),
+    assert(position(pit, [2, 5])),
+    assert(noPit([1, 1])).
+init_agent:-
+    assert(position(agent, [1, 1])).
+init_wumpus:-
+    assert(position(wumpus, [1, 3])),
+    assert(noWumpus([1, 1])).
+    valid_position([X, Y]):- X>0, Y>0, world_size([P, Q]), X@=<P, Y@=<Q.
+
+adjacent([X, Y], Z):- Left is X-1, 
+	valid_position([Left, Y]), Z=[Left, Y].
+    ([X, Y], Z):- Right is X+1, valid_position([Right, Y]), Z=[Right, Y].
+    adjacent([X, Y], Z):- Above is Y+1, valid_position([X, Above]), Z=[X, Above].
+    adjacent([X, Y], Z):- Below is Y-1, valid_position([X, Below]), Z=[X, Below].
+
+is_smelly([X, Y]):-
+    position(wumpus, Z), \+ noWumpus(Z),
+    adjacent([X, Y], Z).
+    is_breezy([X, Y]):- adjacent([X, Y], Z), position(pit, Z).
+    is_glittery([X, Y]):- position(gold, Z), Z==[X, Y].
+
+moreThanOneWumpus:-
+    wumpus(X), wumpus(Y), X\=Y.
+    killWumpusIfPossible(AgentCell):-
+    wumpus([Xw, Yw]), \+ moreThanOneWumpus, % ascertain Wumpus' cell
+    AgentCell=[Xa, Ya],
+    (Xw==Xa; Yw==Ya),
+    assert(noWumpus([Xw, Yw])),
+    format('~nAgent confirmed Wumpus cell to be ~w and shot an arrow from cell ~w.~nThe
+    WUMPUS has been killed!~n', [[Xw, Yw], AgentCell]),
+    retractall(wumpus(_)).
+    start_searching(Cell, LeadingPath):-
+    printStatus(Cell, LeadingPath), % remove comment to print status at each move
+    is_glittery(Cell),
+    append(LeadingPath, [Cell], CurrentPath),
+
+    \+ goldPath(CurrentPath), assert(goldPath(CurrentPath)).
+    start_searching(Cell, _):-
+    is_breezy(Cell).
+    start_searching(Cell, _):-
+\+ is_breezy(Cell),
+    adjacent(Cell, X),
+    \+ noPit(X), assert(noPit(X)).
+
+start_searching(Cell, _):-
+    is_smelly(Cell),
+    adjacent(Cell, X),
+    \+ noWumpus(X), assert(wumpus(X)).
+
+    start_searching(Cell, _):-
+    \+ is_smelly(Cell),
+    adjacent(Cell, X),
+    \+ noWumpus(X), assert(noWumpus(X)),
+    wumpus(Y), X==Y, retract(wumpus(Y)).
+    start_searching(CurrentCell, LeadingPath):-
+    (killWumpusIfPossible(CurrentCell); format('')),
+    append(LeadingPath, [CurrentCell], CurrentPath),
+    \+ is_glittery(CurrentCell), % We don't wanna explore further if we reach the gold.
+
+    adjacent(CurrentCell, X), \+ member(X, LeadingPath),
+
+    (( noWumpus(X), noPit(X)) -> write('');
+    (\+ maybeVisitLater(CurrentCell, _) -> assert(maybeVisitLater(CurrentCell, LeadingPath));
+    write(''))
+    ),
+    noWumpus(X), noPit(X),
+    start_searching(X, CurrentPath).
+
+printResult:-
+    \+ goldPath(_), write("==> Actually, no possible paths found! :(").
+printResult:-
+    goldPath(_), !, format('The following paths to the Gold are found: ~n'),
+    forall(goldPath(X), writeln(X)).
+
+printStatus(Cell, LeadingPath):-
+    format('~n--------------- STATUS ---------------~nCurrently in ~w~nLeading path: ~w~n', [Cell,
+    LeadingPath]),
+    write('WUMPUS: '),
+    forall(wumpus(X), writeln(X)),nl,
+    write('NO PIT: '),
+    forall(noPit(Y), writeln(Y)),
+    write('NO WUMPUS: '),
+    forall(noWumpus(Z), writeln(Z)),
+    write('MAYBE VISIT LATER: '),
+    forall(maybeVisitLater(M, _), writeln(M)),
+    format('~n-----------------------~n~n').
+</pre></code>
+</body>
+</html>

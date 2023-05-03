@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Untitled</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+<pre><code>
+
+from matplotlib import pyplot as plt
+import networkx as nx
+import numpy as np
+
+# Building the graph
+G = nx.DiGraph()
+nodes = np.arange(0, 5).tolist()
+G.add_nodes_from(nodes)
+G.add_edges_from([(0, 2), (1, 2), (2, 3), (2, 4)])
+pos = {
+    0: (5, 10),
+    1: (10, 10),
+    2: (7.5, 7.5),
+    3: (5, 5),
+    4: (10, 5)
+}
+labels = {
+    0: "Bulgary",
+    1: "Earthquake",
+    2: "Alarm",
+    3: "John Calls",
+    4: "Marry Calls",
+}
+nx.draw_networkx(G, pos = pos, labels = labels, arrows = True, node_shape = "s", node_color = "white")
+plt.title("DAG")
+plt.show()
+
+#Solution for the problem
+prob_b = float(input("Enter probability of Burglary = "))
+prob_e = float(input("Enter probability of Earthquake = "))
+prob_a_BtEt = float(input("Enter probability of Alarm if Buglary and Earthquake = "))
+prob_a_BtEf = float(input("Enter probability of Alarm if Buglary and not Earthquake = "))
+prob_a_BfEt = float(input("Enter probability of Alarm if not Buglary and Earthquake = "))
+prob_a_BfEf = float(input("Enter probability of Alarm if not Buglary and not Earthquake = "))
+prob_j_At = float(input("Enter probability of John calls if Alarm rings = "))
+prob_j_Af = float(input("Enter probability of John calls if Alarm does not rings = "))
+prob_m_At = float(input("Enter probability of Marry calls if Alarm rings = "))
+prob_m_Af = float(input("Enter probability of Marry calls if Alarm does not rings = "))
+
+ans1 = prob_j_At * prob_m_At * prob_a_BfEf * (1 - prob_b) * (1 - prob_e)
+print("Probability that Alarm is sounded but neither Burglary nor Earthquake occurs \nand both John and Marry calls = ", ans1)
+
+prob_At = prob_a_BtEt * prob_b * prob_e + prob_a_BtEf * prob_b * (1 - prob_e) + prob_a_BfEt * (1 - prob_b) * prob_e + prob_a_BfEf * (1 - prob_b) * (1 - prob_e)
+print("Probability that Alarm is sounded = ", prob_At)
+
+prob_Af = (1 - prob_a_BtEt) * prob_b * prob_e + (1 - prob_a_BtEf) * prob_b * (1 - prob_e) + (1 - prob_a_BfEt) * (1 - prob_b) * prob_e + (1 - prob_a_BfEf) * (1 - prob_b) * (1 - prob_e)
+print("Probability that Alarm is not sounded = ", prob_Af)
+
+ans2 = (prob_j_At * prob_At) + (prob_j_Af * prob_Af)
+print("Probability that John calls = ", ans2)
+
+ans3 = (prob_m_At * prob_At) + (prob_m_Af * prob_Af)
+print("Probability that Marry calls = ", ans3)
+
+</pre></code>
+</body>
+</html>

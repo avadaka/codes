@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Untitled</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+<pre><code>
+
+
+import math
+
+def minimax(curDepth, nodeIndex, maxTurn, scores, targetDepth):
+    if curDepth == targetDepth:
+        return scores[nodeIndex]
+    if maxTurn:
+        return max(minimax(curDepth + 1, nodeIndex * 2, False, scores, targetDepth), minimax(curDepth + 1, nodeIndex * 2 + 1, False, scores, targetDepth))
+    else:
+        return min(minimax(curDepth + 1, nodeIndex * 2, True, scores, targetDepth), minimax(curDepth + 1, nodeIndex * 2 + 1, True, scores, targetDepth))
+
+def minimum():
+    op = olist
+    for i in op:
+        if len(graph[i]) != 0:
+            for j in graph[i]:
+                if util[j] < 10:
+                    olist.append(j)
+                else:
+                    clist.append(j)
+        olist.remove(i)
+        clist.append(i)
+
+def maximum():
+    op = olist.copy()
+    for i in op:
+        path = []
+        all_paths = []
+        winutil = 0
+        if len(graph[i]) != 0:
+            for j in graph[i]:
+                if util[j] > winutil:
+                    if i == 6:
+                        path.append(1)
+                        path.append(3)
+                        path.append(i)
+                        path.append(j)
+                        all_paths.append(path)
+                    elif i == 8:
+                        path.append(1)
+                        path.append(4)
+                        path.append(i)
+                        path.append(j)
+                        all_paths.append(path)
+                    else:
+                        path.append(i)
+                        path.append(j)
+                        all_paths.append(path)
+                        print(f"The optimum path is {path}")
+                        print("All possible paths are: ")
+                        clist.append(j)
+                        if len(olist) != 0:
+                            continue
+                        else:
+                            break
+                else:
+                    olist.append(j)
+        olist.remove(i)
+        clist.append(i)
+    print(all_paths)
+
+def mm():
+    olist.append(1)
+    c = 0
+    while len(olist) != 0:
+        if c == 1:
+            minimum()
+            c = 0
+        else:
+            maximum()
+            c = 1
+
+graph = {
+    1: [2, 3, 4],
+    2: [5, 6],
+    3: [7, 8],
+    4: [9, 10],
+    5: [],
+    6: [],
+    7: [],
+    8: [],
+    9: [],
+    10: [],
+}
+
+util = {
+    1: 8,
+    2: 4,
+    3: 0,
+    4: 8,
+    5: 4,
+    6: 7,
+    7: 1,
+    8: 0,
+    9: 13,
+    10: 8,
+}
+scores = [8, 4, 0, 8, 4, 7, 1, 0, 13, 8]
+treeDepth = 3
+olist = []
+clist = []
+path = []
+mm()
+print("The optimal value is =", end=" ")
+print(minimax(0, 0, True, scores, treeDepth))
+
+</pre></code>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
